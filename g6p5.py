@@ -54,6 +54,11 @@ def main():
 					print('Dictionary is empty. Add a person or load a file first.')
 				else:
 					Edit(Described,Dictionary)
+            elif response == 'u':
+				if Dictionary == {}:
+					print('Dictionary is empty. Add a person or load a file first.')
+                else:
+                    Described = Update(Dictionary,Described,Referenced)
 			elif response == 'q':
 				quit = input("Are you sure you'd like to quit? Respond with yes or no.\n")
 				quit = quit.upper()
@@ -173,26 +178,52 @@ def Add(Dictionary,Described,Referenced):
 				resp = input("Enter a father's name. Enter to continue to mothers.\n")
 				if resp !='':
 					Father.append(resp)
+                    if resp in Described:
+                        if name in Dictionary[resp]:
+                            continue
+                        else:
+                            print('''The father's description of child needs updated''')
+                            
 			resp = 'j'
 			while resp !='':
 				resp = input("Enter a mother's name. Enter to continue to spouses.\n")
 				if resp !='':
 					Mother.append(resp)
+                    if resp in Described:
+                        if name in Dictionary[resp]:
+                            continue
+                        else:
+                            print('''The mother's description of child needs updated''')
 			resp = 'j'
 			while resp !='':
 				resp = input("Enter a spouse's name. Enter nothing to continue to sons.\n")
 				if resp !='':
 						Spouse.append(resp)
+                        if resp in Described:
+                            if name in Dictionary[resp]
+                                continue
+                            else:
+                                print('''The spouse's description of spouse needs updated''')
 			resp = 'j'
 			while resp !='':
 				resp = input("Enter a son's name. Enter nothing to continue to daughters.\n")
 				if resp !='':
 					Son.append(resp)
+                        if resp in Described:
+                            if name in Dictionary[resp]
+                                continue
+                            else:
+                                print('''The Son's description of parent needs updated''')
 			resp = 'j'
 			while resp !='':
 				resp = input("Enter a daughter's name. Enter nothing to finish.\n")
 				if resp !='':
 					Daughter.append(resp)
+                        if resp in Described:
+                            if name in Dictionary[resp]
+                                continue
+                            else:
+                                print('''The daughter's description of  needs updated''')
 			exists = False
 			Dictionary.update({Name:{'FATHER':Father,'MOTHER':Mother,'SPOUSE':Spouse,'SON':Son,'DAUGHTER':Daughter}})
 			if Name not in Described:
@@ -296,6 +327,7 @@ def Edit(Described,Dictionary):
 	udaughters = Daughters
 	flag = True
 	editresp = ''
+	editflag = True
 	print('People who have been described:')	
 	for person in Described:
 		print(person)
@@ -332,24 +364,39 @@ def Edit(Described,Dictionary):
 			for i in Daughters:
 				print(i)
 			flag = False
-			while editresp != 'quit': #loops the edit until quit is entered
+			while editflag == True: #loops the edit until quit is entered
 				editresp = input("Would you like to add a relative, delete a relative, or quit?\n")
 				editresp = editresp.lower()
 				if editresp == 'add':
 					ufathers,umothers,uspouses,usons,udaughters = addrelative(ufathers,umothers,uspouses,usons,udaughters)
-					
-					Dictionary.update({resp:{'FATHER':ufathers,'MOTHER':umothers,'SPOUSE':uspouses,'SON':usons,'DAUGHTER':udaughters}})
 					print("The person has successfully been added.")
-					resp,flag= printupdateddict(resp,ufathers,umothers,uspouses,usons,udaughters)
-				if edirresp == 'delete':
+					resp,flag= printupdatedperson(resp,ufathers,umothers,uspouses,usons,udaughters)
+				elif editresp == 'delete':
 					ufathers,umothers,uspouses,usons,udaughters = deleterelative(ufathers,umothers,uspouses,usons,udaughters)
+					print("The person has successfully been deleted.")
+					resp,flag= printupdatedperson(resp,ufathers,umothers,uspouses,usons,udaughters)
+				elif editresp == 'quit':
+					quitresp = input('Would you like to save your changes? Answer yes or no.').lower()
+					if quitresp == 'yes':
+						Dictionary.update({resp:{'FATHER':ufathers,'MOTHER':umothers,'SPOUSE':uspouses,'SON':usons,'DAUGHTER':udaughters}})
+						print('Your changes have been saved.')
+						editflag == False
+					elif quitresp == 'no':
+						quitresp2 = input("Are you sure? You will lose all changes. Answer yes or no.\n")
+						if quitresp2 == "yes":
+							print("Your changes have not been saved.")
+							editflag = False
+						elif quitresp2 == 'no':
+							continue
+						else:
+							print("Enter a valid response.")
 				else: 
 					print("Please choose an appropriate response.")
 		else:
 			print("Please select a name from the list.")
 
 
-def printupdateddict(resp,Fathers,Mothers,Spouses,Sons,Daughters):
+def printupdatedperson(resp,Fathers,Mothers,Spouses,Sons,Daughters):
 	print("Edited information for",resp,":")
 	print('')
 	print("Father(s):")
@@ -373,17 +420,61 @@ def printupdateddict(resp,Fathers,Mothers,Spouses,Sons,Daughters):
 		print(i)
 	flag = False
 	return resp,flag
-				
+
+def deleterelative(f,m,sp,so,d):
+	delresp = 'aaa'
+	while delresp.lower() != '':
+		print('Would you like to delete a father, mother, spouse, son, or daughter?')
+		delresp = input('Enter nothing when finished deleting.\n')
+		if delresp =='father':
+			personname = input('Enter the father you wish to delete.\n').upper()
+			if personname in f:
+				f.remove(personname)
+				print('The person has been deleted.')
+			else:
+				print("The person is not a father.")
+		elif delresp =='mother':
+			personname = input('Enter the mother you wish to delete.\n').upper()
+			if personname in m:
+				m.remove(personname)
+				print('The person has been deleted.')
+			else:
+				print("The person is not a father.")
+		elif delresp =='spouse':
+			personname = input('Enter the spouse you wish to delete.\n').upper()
+			if personname in sp:
+				sp.remove(personname)
+				print('The person has been deleted.')
+			else:
+				print("The person is not a spouse.")
+		elif delresp =='son':
+			personname = input('Enter the son you wish to delete.\n').upper()
+			if personname in so:
+				so.remove(personname)
+				print('The person has been deleted.')
+			else:
+				print("The person is not a son.")
+		elif delresp =='daughter':
+			personname = input('Enter the daughter you wish to delete.\n').upper()
+			if personname in d:
+				d.remove(personname)
+				print('The person has been deleted.')
+			else:
+				print("The person is not a daughter.")
+		else:
+			print("Please choose an appropriate response.")
+	return f,m,sp,so,d					
+
 def addrelative(f,m,sp,so,d):
 	addresp = 'aaaa'
-	while addresp != '':
+	while addresp.lower() != '':
 		print("Would you like to add a father, mother, spouse, son, or daughter?")
 		addresp = input("Enter nothing when finished adding.\n")	
 		if addresp == 'father':
 			personname = input("Enter the father you wish to add.\n").upper()
 			if personname not in f:
 				f.append(personname)
-				print("The person was added.")
+				print("The person has been added.")
 			else:
 				print("He was not added. He already exists.")
 		elif addresp == 'mother':
@@ -417,5 +508,12 @@ def addrelative(f,m,sp,so,d):
 		elif addresp != '':
 			print("Please choose an appropriate relative type.")
 	return f,m,sp,so,d
-
+    def Update(Dictionary, Described, Referenced):
+        for key in Dictionary.keys():
+            for key2 in Dictionary[key].values():
+                if  key2 not in Referenced:
+                    Referenced.append()
+            if key not in Described:
+                Described.append()
+    return Described
 main()
