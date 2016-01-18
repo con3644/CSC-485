@@ -3,7 +3,12 @@ Program 5
 John Payerchin, John Juran, Max Conroy (Group 6)
 CSC 485 Python
 10-27-2014
+
+Program that allows users to add people to a list, along with their relationship
+to other people in the list. User can look up information on people in list as well as delete existing people.
+
 '''
+
 import sys
 
 def main():
