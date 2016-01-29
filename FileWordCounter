@@ -1,0 +1,129 @@
+'''
+   Group #2 - Program 3 - Word Count Program                  
+   Max Conroy                                                 
+   CSC 485 - Special Topics in Computer Science - Python      
+'''
+
+import sys
+import os.path
+
+def main():
+    printTitle()
+    ifile, inputFile, inputFlag = promptInput()
+    ofile, outputFile, outputFlag = promptOutput()
+    
+    if inputFlag == True and outputFlag == True:        #check that files are open
+        nlist,wlist,copy,t,wordlen = processFile(ifile, inputFile)      
+        writeFile(ofile, nlist, wlist, copy,t,inputFile,wordlen)
+       
+def printTitle():
+    print("=================================================")
+    print("        Welcome to the Word Count Program        ")
+    print("=================================================")
+    print("- Enter an input and output file")
+    print("- The program will count the words/numbers")
+    print("- The output will be written in the output file")
+    print("=================================================")
+    
+    
+def promptInput():
+    inputFlag = False                                                           
+    while inputFlag == False:                                                   
+        inputFile = input("Enter input file name (Enter Q to quit): ...")        
+        if inputFile.lower() == "q":                                                      
+            print("Program Terminated!\n")                                 
+            sys.exit()                                    #end program
+        else:                                               
+            if os.path.exists(inputFile) == True:           #See if the input file exists
+                if os.path.isfile(inputFile) == True:       #See if the input file is a file
+                    ifile = open(inputFile,"r")             #Open the input file for reading
+                    print("Input File Opened!\n")
+                    inputFlag = True                        #Exit the loop
+                else:                                       #is not a file
+                    print("The input file is not a file!\n")
+            else:                                           #doesn't exist         
+                print("The input file doesn't exist!\n")
+    return ifile, inputFile, inputFlag                     
+
+def promptOutput():
+    outputFlag = False                                                          
+    while outputFlag == False:                                                 
+        outputFile = input("Enter output file name (Enter Q to quit): ... ")        
+        if outputFile.lower() == "q":                                                          
+            print("Program Terminated!")                                  
+            sys.exit()                                                           #end program
+        else:                                              
+            if os.path.exists(outputFile) == True:           #See if the output file exists
+                if os.path.isfile(outputFile) == True:       #See if the output file is a file
+                    print("The output file exists! Do you want to overwrite it?\n")
+                    overwriter = input("Enter Y to overwrite or anything else to enter a new file name: ...")     
+                    if overwriter == "Y" or overwriter == "y":      #Overwrite the output file
+                        ofile = open(outputFile,"w")                #Open the output file for reading
+                        print("Output File Opened!\n")
+                        outputFlag = True                           
+                    else:                                    
+                        print("The output file has not been overwritten, please input a new output file!\n")
+                else:                                        #is not a file
+                    print("The output file is not a file!\n")
+            else:                                            #doesn't exist         
+                print("The output file doesn't exist!\n")
+    return ofile, outputFile, outputFlag                  
+
+def processFile(ifile, inputFile):
+    nlist = []  #list of numbers in file
+    wlist = []  #list of words in file
+    copy = []   #copy of input file
+    t=0      #total of number list
+    for i in ifile:
+        i = i.replace("'","")
+        i = i.split()
+        copy.append(i)
+    for i in copy:  #outer list
+        for v in i: #inner list
+            typ=0
+            try:
+                v=float(v)
+                typ=1       #is a number
+            except ValueError:      
+                typ=2        #is a string
+            if typ==1:
+                nlist.append(v)
+            elif typ==2:
+                wlist.append(v)
+            else:
+                print('Error\n')
+                sys.exit()
+    wordlen = len(wlist)    #number of words in the word list
+    for x in nlist: #total of numbers list
+        t+=x
+
+    ifile.close()
+    return nlist,wlist,copy,t,wordlen
+
+def writeFile(ofile,nlist,wlist,copy,t,inputFile,wordlen,):
+    temp=''
+    ofile.write('Copy of original file:')
+    for i in copy:
+        ofile.write('\n')
+        for v in i:
+            ofile.write(v+' ')
+    ofile.write('\nList of words in file in order of occurrence:\n')
+    for i in wlist:
+        ofile.write(i+'\n')
+    ofile.write('List of words in file in alphabetical order:\n')
+    wlist.sort()
+    for i in wlist:
+        ofile.write(i+'\n')
+    ofile.write('Count of words in the list:\n')
+    ofile.write(str(wordlen)+'\n')
+    ofile.write('List of numbers in file:\n')
+    for i in nlist:
+        ofile.write(str(i)+'\n')
+    ofile.write('Total of all numbers in file:\n')
+    ofile.writelines(str(t)+'\n')
+    print('The file '+inputFile+' has been written\n')
+
+    ofile.close()
+    return
+
+main()
